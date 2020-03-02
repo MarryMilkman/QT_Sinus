@@ -56,5 +56,7 @@ void    CoordWindow::slot_new_param(float x, float y) {
 }
 
 void    CoordWindow::slot_fresh() {
-
+    _value_x = 0;
+    _value_y = 0;
+    this->_draw();
 }

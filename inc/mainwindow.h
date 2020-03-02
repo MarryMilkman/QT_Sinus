@@ -4,6 +4,7 @@
 #include "lib.h"
 
 #include <QMainWindow>
+#include <QSettings>
 
 #include "coordwindow.h"
 #include "statewindow.h"
@@ -27,8 +28,7 @@ public:
 private:
     Ui::MainWindow      *ui;
 
-    StateWindow         &_state_win;
-    CoordWindow         &_coord_win;
+    QSettings           _setting;
 
     float               _value_x;
     float               _value_y;
@@ -36,6 +36,9 @@ private:
 
     float               _delta_x;
     int                 _delta_t;
+
+    StateWindow         &_state_win;
+    CoordWindow         &_coord_win;
 
     QThread             _sinus_worker_thread;
     SinusWorker         _sinus_worker;
@@ -73,6 +76,7 @@ signals:
     void    signal_pause();
     void    signal_param_dx(float dx);
     void    signal_param_dt(int dt);
+    void    signal_once_calculate(float value_x);
     void    signal_start_calculate(float value_x, float delta_x, int delta_t);
 
 

@@ -5,12 +5,13 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , _setting("last_session.conf", QSettings::IniFormat)
     , _state_win(StateWindow::getInstance())
     , _coord_win(CoordWindow::getInstance())
-    , _value_x(0)
 {
-    this->_delta_t = this->_state_win.get_delta_t();
-    this->_delta_x = this->_state_win.get_delta_x();
+    this->_value_x = _setting.value("value_x", -1).toFloat();
+    this->_delta_t = _state_win.get_delta_t();
+    this->_delta_x = _state_win.get_delta_x();
 
     ui->setupUi(this);
       // CoordWindow connection
@@ -43,10 +44,13 @@ MainWindow::MainWindow(QWidget *parent)
                      &this->_sinus_worker, &SinusWorker::slot_change_dt);
     QObject::connect(this, &MainWindow::signal_start_calculate,
                      &this->_sinus_worker, &SinusWorker::slot_start_calculate);
+    QObject::connect(this, &MainWindow::signal_once_calculate,
+                     &this->_sinus_worker, &SinusWorker::slot_once_calculate);
           // connect signal (only one) of SinusWorker to slot MW
     QObject::connect(&this->_sinus_worker, &SinusWorker::signal_calc_values,
                      this, &MainWindow::slot_param_from_thread);
     this->_sinus_worker_thread.start();
+    emit signal_once_calculate(this->_value_x);
     emit signal_start_calculate(this->_value_x, this->_delta_x, this->_delta_t);
 
 }
@@ -58,6 +62,7 @@ MainWindow::~MainWindow()
     this->_sinus_worker_thread.quit();
     this->_sinus_worker_thread.wait();
     delete ui;
+    _setting.setValue("value_x", this->_value_x);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -124,4 +129,5 @@ void MainWindow::on_pause_button_clicked()
 void MainWindow::on_stop_button_clicked()
 {
     emit this->signal_stop();
+    emit this->signal_fresh_wins();
 }

@@ -26,6 +26,10 @@ SinusWorker::~SinusWorker() {
 
 
 // Public slots:
+void    SinusWorker::slot_once_calculate(float value_x) {
+    emit signal_calc_values(value_x, std::sin(value_x));
+}
+
 void    SinusWorker::_calculate() {
     if (_is_pause == false) {
         _value_y = std::sin(_value_x);

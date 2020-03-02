@@ -33,6 +33,7 @@ public slots:
     void    slot_change_dx(float dx);
     void    slot_change_dt(int dt);
 
+    void    slot_once_calculate(float value_x);
     void    slot_start_calculate(float value_x, float delta_x, int delta_t);
 
 signals:
